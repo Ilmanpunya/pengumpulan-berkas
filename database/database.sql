@@ -24,4 +24,4 @@ CREATE TABLE `admin` (
   PRIMARY KEY  (`id`)
 );
 
-INSERT INTO admin (username, password) VALUES ('admin','2020@Banjarnegara');
+INSERT INTO admin (username, password) VALUES ('admin','password');
