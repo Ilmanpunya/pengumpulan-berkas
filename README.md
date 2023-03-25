@@ -9,6 +9,9 @@ Project **Sistem Pendaftaran Uji KIR Dinhub Banjarnegara** merupakan bagian dari
 * **Website Utama** Dinas Perhubungan Kabupaten Banjarnegara: **CMS Wordpress** + **DIVI** (Theme Plugin)
 * **Sistem Pendaftaran Uji KIR** Dinas Perhubungan Kabupaten Banjarnegara: **LAMP** (Linux, Apache, MySQL, PHP)
 
+## Mockup Preview
+![Mockup](screenshots/Dinhub%20Banjarnegara.png)
+
 ## Screenshots
 * **Website Utama Dinas Perhubungan Kabupaten Banjarnegara**
 
@@ -61,6 +64,10 @@ Website Dinas Perhubungan Kabupaten Banjarnegara: [https://dinhub.banjarnegaraka
   * Upload all files in [**`website`**](website) folder into your web **main folder (public_html)**
   * Change database info (edit the database **host, username, and password**) on [**`config.php`**](website/config.php) & [**`admin/config.php`**](website/admin/config.php)
   * Open the website on **your-website-url.com**
+  * Admin Login Page: your-website-url.com/admin (Change your-website-url.com with your own domain, if you installed it on localhost, change it to localhost)
+  * Admin Account:
+    * Username: admin
+    * Password: password
 
 ## System Context Diagram (SCD) & Data Flow Diagram (DFD)
   System Context Diagram (SCD)_1 | System Context Diagram (SCD)_2
