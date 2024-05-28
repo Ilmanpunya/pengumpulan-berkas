@@ -20,7 +20,7 @@ CREATE TABLE `users` (
 CREATE TABLE `admin` (
   `id` int(11) NOT NULL auto_increment,
   `username` varchar(30),
-  `password` varchar(30)
+  `password` varchar(30),
   PRIMARY KEY  (`id`)
 );
 
