@@ -1,50 +1,99 @@
 <?php
-// include database connection file
-include_once("config.php");
+session_start();
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
 
-// Check if form is submitted for user update, then redirect to homepage after update
-if(isset($_POST['update']))
-{   
+include 'config.php';
+
+// == HANDLE POST: UPDATE DATA ==
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     $id = $_POST['id'];
 
-    $nik = $_POST['nik'];
-    $name = $_POST['name'];
-    $address = $_POST['address'];
-    $mobile = $_POST['mobile'];
-    $policenumber = $_POST['policenumber'];
-    $vehicle = $_POST['vehicle'];
-    $type = $_POST['type'];
-    $yearscreated = $_POST['yearscreated'];
-    $date = strtotime($_POST['date']);
-    $date = date('Y-m-d H:i:s', $date);
+    // Ambil data lama
+    $result = mysqli_query($mysqli, "SELECT * FROM pengumpulan WHERE id = '$id'");
+    $data_lama = mysqli_fetch_assoc($result);
 
-    // update user data
-    $result = mysqli_query($mysqli, "UPDATE users SET nik='$nik',name='$name',address='$address',mobile='$mobile',policenumber='$policenumber',vehicle='$vehicle',type='$type',yearscreated='$yearscreated',date='$date' WHERE id=$id");
+    // Fungsi upload
+    function handleUpload($fieldName, $oldValue)
+    {
+        if (isset($_FILES[$fieldName]) && $_FILES[$fieldName]['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = 'uploads/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $fileTmp = $_FILES[$fieldName]['tmp_name'];
+            $fileName = time() . '_' . basename($_FILES[$fieldName]['name']);
+            $uploadPath = $uploadDir . $fileName;
 
-    // Redirect to homepage to display updated user in list
+            if (move_uploaded_file($fileTmp, $uploadPath)) {
+                return $uploadPath;
+            }
+        }
+        return $oldValue;
+    }
+
+    // Proses semua field
+    $akreditasi = handleUpload('akreditasi', $data_lama['akreditasi']);
+    $visi_misi = handleUpload('visi_misi', $data_lama['visi_misi']);
+    $maklumat = handleUpload('maklumat', $data_lama['maklumat']);
+    $sop = handleUpload('sop', $data_lama['sop']);
+    $indeks_kepuasan = handleUpload('indeks_kepuasan', $data_lama['indeks_kepuasan']);
+    $dokumentasi = handleUpload('dokumentasi', $data_lama['dokumentasi']);
+    $lokasi = handleUpload('lokasi', $data_lama['lokasi']);
+    $tenaga_penguji = handleUpload('tenaga_penguji', $data_lama['tenaga_penguji']);
+    $fasilitas_pengujian = handleUpload('fasilitas_pengujian', $data_lama['fasilitas_pengujian']);
+    $akurasi_alat = handleUpload('akurasi_alat', $data_lama['akurasi_alat']);
+    $bukti_lulus = handleUpload('bukti_lulus', $data_lama['bukti_lulus']);
+    $kapasitas_uji = handleUpload('kapasitas_uji', $data_lama['kapasitas_uji']);
+    $pemeliharaan_fasilitas = handleUpload('pemeliharaan_fasilitas', $data_lama['pemeliharaan_fasilitas']);
+    $akreditasi_lama = handleUpload('akreditasi_lama', $data_lama['akreditasi_lama']);
+    $date = $_POST['date'];
+
+    // Update database
+    $query = "UPDATE pengumpulan SET 
+        akreditasi = '$akreditasi',
+        visi_misi = '$visi_misi',
+        maklumat = '$maklumat',
+        sop = '$sop',
+        indeks_kepuasan = '$indeks_kepuasan',
+        dokumentasi = '$dokumentasi',
+        lokasi = '$lokasi',
+        tenaga_penguji = '$tenaga_penguji',
+        fasilitas_pengujian = '$fasilitas_pengujian',
+        akurasi_alat = '$akurasi_alat',
+        bukti_lulus = '$bukti_lulus',
+        kapasitas_uji = '$kapasitas_uji',
+        pemeliharaan_fasilitas = '$pemeliharaan_fasilitas',
+        akreditasi_lama = '$akreditasi_lama',
+        date = '$date'
+        WHERE id = '$id'";
+
+    mysqli_query($mysqli, $query);
     header("Location: index.php");
+    exit();
 }
-?>
-<?php
-// Display selected user data based on id
-// Getting id from url
+
+// == HANDLE GET: TAMPILKAN FORM ==
+if (!isset($_GET['id'])) {
+    echo "ID tidak ditemukan.";
+    exit;
+}
+
 $id = $_GET['id'];
+$query = "SELECT * FROM pengumpulan WHERE id = '$id'";
+$result = mysqli_query($mysqli, $query);
 
-// Fetech user data based on id
-$result = mysqli_query($mysqli, "SELECT * FROM users WHERE id=$id");
-
-while($user_data = mysqli_fetch_array($result))
-{
-    $nik = $user_data['nik'];
-    $name = $user_data['name'];
-    $address = $user_data['address'];
-    $mobile = $user_data['mobile'];
-    $policenumber = $user_data['policenumber'];
-    $vehicle = $user_data['vehicle'];
-    $type = $user_data['type'];
-    $yearscreated = $user_data['yearscreated'];
+if (!$result || mysqli_num_rows($result) === 0) {
+    echo "Data tidak ditemukan.";
+    exit;
 }
+
+$data_lama = mysqli_fetch_assoc($result);
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -60,7 +109,8 @@ while($user_data = mysqli_fetch_array($result))
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
@@ -73,86 +123,127 @@ while($user_data = mysqli_fetch_array($result))
 <body class="bg-gradient-primary">
 
     <div class="container">
-
         <!-- Outer Row -->
         <div class="row justify-content-center">
-
             <div class="col-xl-10 col-lg-12 col-md-9">
-
                 <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
-                        <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                            <div class="col-lg-6">
-                            <br/>
-                            <a href="index.php" class="btn btn-primary btn-icon-split">
-                                <span class="icon text-white-50">
-                                    <i class="fas fa-arrow-left"></i>
-                                </span>
-                                <span class="text">Kembali ke Halaman Utama</span>
-                            </a>
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Edit Entri Uji KIR</h1>
+                    <div class="card-body p-4">
+
+                        <a href="index.php" class="btn btn-primary btn-icon-split mb-3">
+                            <span class="icon text-white-50">
+                                <i class="fas fa-arrow-left"></i>
+                            </span>
+                            <span class="text">Kembali ke Halaman Utama</span>
+                        </a>
+
+                        <div class="text-center mb-4">
+                            <h1 class="h4 text-gray-900">Edit Pengumpulan Berkas</h1>
+                        </div>
+
+                        <form class="user" action="edit.php" method="post" name="update_user"
+                            enctype="multipart/form-data">
+                            <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
+                            <div class="row">
+                                <!-- Kolom Kiri -->
+                                <div class="col-lg-6">
+                                    <?php
+                                    $fields_left = [
+                                        "Surat permohonan akreditasi" => "akreditasi",
+                                        "Visi, Misi dan Moto" => "visi_misi",
+                                        "Komitmen pelayanan dan Maklumat pelayanan UPUBKB" => "maklumat",
+                                        "Standar Operasional Prosedur" => "sop",
+                                        "Survei Indeks Kepuasan Masyarakat" => "indeks_kepuasan",
+                                        "Dokumentasi dipublikasikannya Unsur Administrasi dan Papan Informasi" => "dokumentasi",
+                                        "Lokasi" => "lokasi"
+                                    ];
+                                    foreach ($fields_left as $label => $name) {
+                                        echo "
+                                        <div class='form-group'>
+                                            <label class='font-weight-bold'>$label</label>
+                                            <input type='file' name='$name' class='form-control-file' accept='application/pdf'>";
+                                        if (!empty($data_lama[$name])) {
+                                            $filePath = $data_lama[$name];
+                                            $fileName = preg_replace('/^\d+_/', '', basename($filePath));
+                                            echo "<br><small>File sebelumnya: $fileName</small>";
+                                        }
+                                        echo "</div>";
+                                    }
+                                    ?>
+                                </div>
+
+                                <!-- Kolom Kanan -->
+                                <div class="col-lg-6">
+                                    <?php
+                                    $fields_right = [
+                                        "Tenaga Penguji Kendaraan Bermotor" => "tenaga_penguji",
+                                        "Fasilitas Pengujian" => "fasilitas_pengujian",
+                                        "Keakurasian Alat" => "akurasi_alat",
+                                        "Bukti Lulus Uji" => "bukti_lulus",
+                                        "Kapasitas Uji Per Hari" => "kapasitas_uji",
+                                        "Pemeliharaan Fasilitas" => "pemeliharaan_fasilitas",
+                                        "Sertifikat Akreditasi Sebelumnya" => "akreditasi_lama"
+                                    ];
+
+                                    foreach ($fields_right as $label => $name) {
+                                        echo "
+                                        <div class='form-group'>
+                                            <label class='font-weight-bold'>$label</label>
+                                            <input type='file' name='$name' class='form-control-file' accept='application/pdf'>";
+                                        if (!empty($data_lama[$name])) {
+                                            $filePath = $data_lama[$name];
+                                            $fileName = preg_replace('/^\d+_/', '', basename($filePath));
+                                            echo "<br><small>File sebelumnya: $fileName</small>";
+                                        }
+                                        echo "</div>";
+                                    }
+                                    ?>
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Tanggal Pengumpulan Berkas</label>
+                                        <input type="date" name="date"
+                                            value="<?= htmlspecialchars($data_lama['date']) ?>"
+                                            class="form-control form-control-user">
                                     </div>
-                                    <form class="user" action="edit.php" method="post" name="update_user">
-                                        <div class="form-group">
-                                            <input type="text" name="nik" value="<?php echo $nik;?>" class="form-control form-control-user"
-                                                placeholder="NIK">
+                                </div>
+
+                            </div>
+
+                            <div class="text-center px-4 mb-4">
+                                <button type="button" class="btn btn-primary btn-user btn-block" data-toggle="modal"
+                                    data-target="#confirmModal">
+                                    Update
+                                </button>
+                            </div>
+
+                            <!-- Modal Konfirmasi -->
+                            <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
+                                aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Update Data</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
                                         </div>
-                                        <div class="form-group">
-                                            <input type="text" name="name" value="<?php echo $name;?>" class="form-control form-control-user"
-                                                placeholder="Nama">
+                                        <div class="modal-body">
+                                            Apakah anda yakin semua data sudah benar?
                                         </div>
-                                        <div class="form-group">
-                                            <input type="text" name="address" value="<?php echo $address;?>" class="form-control form-control-user"
-                                                placeholder="Alamat">
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-primary" name="update">Ya,
+                                                Update</button>
                                         </div>
-                                        <div class="form-group">
-                                            <input type="text" name="mobile" value="<?php echo $mobile;?>" class="form-control form-control-user"
-                                                placeholder="No HP">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" name="policenumber" value="<?php echo $policenumber;?>" class="form-control form-control-user"
-                                                placeholder="No Polisi">
-                                        </div>
-                                        <div class="form-group">
-                                        Jenis Kendaraan :
-                                            <select id="cars" name="vehicle" class="custom-select" placeholder="Jenis Kendaraan"> 
-                                                <option value="Mobil" <?php if ($vehicle == "Mobil") {echo "selected";} ?>>Mobil</option>
-                                                <option value="Sepeda Motor" <?php if ($vehicle == "Sepeda Motor") {echo "selected";} ?>>Sepeda Motor</option>
-                                                <option value="Truk" <?php if ($vehicle == "Truk") {echo "selected";} ?>>Truk</option>
-                                                <option value="Bus" <?php if ($vehicle == "Bus") {echo "selected";} ?>>Bus</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" name="type" value="<?php echo $type;?>" class="form-control form-control-user"
-                                                placeholder="Merk & Tipe Kendaraan">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" name="yearscreated" value="<?php echo $yearscreated;?>" class="form-control form-control-user"
-                                                placeholder="Tahun Pembuatan">
-                                        </div>
-                                        <div class="form-group">
-                                        Pilih Tanggal Uji KIR :
-                                            <input type="date" name="date" class="form-control form-control-user">
-                                        </div>
-                                        <input type="hidden" name="id" value=<?php echo $_GET['id'];?>>
-                                        <input class="btn btn-primary btn-user btn-block" type="submit" name="update" value="Update" onclick="return confirm('Apakah anda yakin data sudah benar semua?')">
-                                    </form>
-                                    <br/>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
     </div>
+
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>

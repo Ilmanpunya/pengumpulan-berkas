@@ -1,8 +1,9 @@
 <?php
-   session_start();
-   if(isset($_SESSION['username'])) {
-   header('location:index.php'); }
-   require_once("config.php");
+session_start();
+if (isset($_SESSION['username'])) {
+    header('location:index.php');
+}
+require_once("config.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,17 +16,18 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Login Admin Sistem Uji KIR</title>
+    <title>Login Admin</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/sb-admin-2.css" rel="stylesheet">
 
 </head>
 
@@ -38,22 +40,18 @@
 
             <div class="col-xl-10 col-lg-12 col-md-9">
 
-                <div class="card o-hidden border-0 shadow-lg my-5">
+                <div class="card o-hidden border-0 shadow-lg " style="margin-top: 100px;">
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            <div class="col-lg-6 d-none d-lg-block">
+                                <div class="bg-login-image" style="width: 250px; height: 260px;"></div>
+                            </div>
                             <div class="col-lg-6">
-                            <br/>
-                            <a href="../index.php" class="btn btn-primary btn-icon-split">
-                                <span class="icon text-white-50">
-                                    <i class="fas fa-arrow-left"></i>
-                                </span>
-                                <span class="text">Kembali ke Halaman Utama</span>
-                            </a>
+                                <br />
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Login Admin Sistem Uji KIR</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Login Admin</h1>
                                     </div>
                                     <form class="user" action="proseslogin.php" method="post">
                                         <div class="form-group">
@@ -61,10 +59,15 @@
                                                 placeholder="Username">
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" name="password" class="form-control form-control-user"
-                                                placeholder="Password">
+                                            <input type="password" name="password"
+                                                class="form-control form-control-user" placeholder="Password">
                                         </div>
-                                        <input class="btn btn-primary btn-user btn-block" type="submit" name="Submit" value="Login">
+                                        <input class="btn btn-primary btn-user btn-block" type="submit" name="Submit"
+                                            value="Login">
+                                        <a href="../login_user.php" class="btn btn-success btn-user btn-block"
+                                            style="color: white; text-decoration: none;">
+                                            Login Users
+                                        </a>
                                     </form>
                                 </div>
                             </div>

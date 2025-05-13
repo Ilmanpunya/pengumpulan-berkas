@@ -10824,8 +10824,11 @@ a:focus {
 }
 
 .bg-login-image {
-  background: url("../img/truk.jpg");
-  background-position: center;
+  background: url("../img/dephub.png");
+  width: 20vw;
+  height: 40vh;
+  margin-left: 95px;
+  margin-top: 65px;
   background-size: cover;
 }
 
@@ -11242,3 +11245,10 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
+
+/* .fas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+} */
